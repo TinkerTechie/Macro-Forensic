@@ -1,0 +1,18 @@
+fastapi>=0.100.0
+uvicorn>=0.23.0
+sqlmodel>=0.0.8
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+slowapi>=0.1.8
+pytest>=7.4.0
+pytest-asyncio>=0.21.1
+
+# Pipeline deps (from original script)
+langchain>=0.1.0
+langgraph>=0.0.10
+llama-parse>=0.3.0
+qdrant-client>=1.7.0
+sentence-transformers>=2.2.2
+neo4j>=5.14.0
+instructor>=1.0.0
+groq>=0.4.0
