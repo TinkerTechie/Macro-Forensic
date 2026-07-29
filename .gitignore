@@ -37,6 +37,7 @@ out/
 
 # Uploads dir (user data, not code)
 mfas/data/uploads/
+data/uploads/
 
 # macOS
 .DS_Store
@@ -58,3 +59,7 @@ qdrant_data/
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Python pycache (all nested)
+**/__pycache__/
+*.pyc

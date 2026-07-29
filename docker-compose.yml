@@ -57,6 +57,7 @@ services:
     container_name: mfas_qdrant
     ports:
       - "6333:6333"
+      - "6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
 
@@ -64,14 +65,15 @@ services:
     image: neo4j:5.18.0-community
     container_name: mfas_neo4j
     ports:
-      - "7474:7474"
-      - "7687:7687"
+      - "7474:7474"   # HTTP Browser UI
+      - "7687:7687"   # Bolt protocol
     environment:
       - NEO4J_AUTH=neo4j/password123
       - NEO4J_PLUGINS=["apoc"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
     volumes:
       - neo4j_data:/data
+      - neo4j_logs:/logs
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider localhost:7474 || exit 1"]
       interval: 10s
@@ -82,3 +84,4 @@ volumes:
   postgres_data:
   qdrant_data:
   neo4j_data:
+  neo4j_logs:
