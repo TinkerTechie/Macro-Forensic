@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.so
+.venv/
+venv/
+env/
+ENV/
+
+# SQLite DB
+*.db
+*.sqlite
+
+# Env files (contain secrets)
+.env
+.env.local
+.env.*.local
+mfas/.env
+
+# Logs
+*.log
+logs/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.cache/
+
+# Uploads dir (user data, not code)
+mfas/data/uploads/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker volumes
+postgres_data/
+neo4j_data/
+qdrant_data/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
