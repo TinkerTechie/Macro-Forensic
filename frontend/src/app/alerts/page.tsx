@@ -10,11 +10,11 @@ import type { Alert, RiskLevel } from '@/types';
 import { riskBg, riskLabel, formatDate } from '@/lib/utils';
 
 const MOCK_ALERTS: Alert[] = [
-  { id:'1', title:'Cross-entity debt guarantee detected', description:'Apple Inc. guarantees $18.5B in AOI/AOE obligations. Cross-default clause creates systemic exposure.', risk_level:'high', company:'Apple Inc.', exposure:18_500_000_000, created_at:'2024-01-15T09:12:00Z', acknowledged:false },
-  { id:'2', title:'Off-balance-sheet commitment spike', description:'Northgate Capital has $2.1B in undisclosed operating lease commitments not reflected in headline leverage ratios.', risk_level:'high', company:'Northgate Capital', exposure:2_100_000_000, created_at:'2024-01-14T14:30:00Z', acknowledged:false },
-  { id:'3', title:'Contagion path identified', description:'Three-hop ownership chain from offshore SPV to regulated entity creates potential regulatory arbitrage.', risk_level:'medium', company:'Multi-entity', exposure:450_000_000, created_at:'2024-01-13T11:00:00Z', acknowledged:false },
-  { id:'4', title:'Debt maturity wall — Q1 2025', description:'$8.2B of term debt matures within 90 days with limited refinancing disclosures in the filing.', risk_level:'medium', company:'Tech Holdings LLC', exposure:8_200_000_000, created_at:'2024-01-12T08:00:00Z', acknowledged:true },
-  { id:'5', title:'Related-party transaction anomaly', description:'Undisclosed related-party loans totalling $120M identified in footnote disclosures.', risk_level:'low', company:'Horizon Capital', exposure:120_000_000, created_at:'2024-01-11T17:45:00Z', acknowledged:true },
+  { id: '1', title: 'Cross-entity debt guarantee detected', description: 'Apple Inc. guarantees $18.5B in AOI/AOE obligations. Cross-default clause creates systemic exposure.', risk_level: 'high', company: 'Apple Inc.', exposure: 18_500_000_000, created_at: '2024-01-15T09:12:00Z', acknowledged: false },
+  { id: '2', title: 'Off-balance-sheet commitment spike', description: 'Northgate Capital has $2.1B in undisclosed operating lease commitments not reflected in headline leverage ratios.', risk_level: 'high', company: 'Northgate Capital', exposure: 2_100_000_000, created_at: '2024-01-14T14:30:00Z', acknowledged: false },
+  { id: '3', title: 'Contagion path identified', description: 'Three-hop ownership chain from offshore SPV to regulated entity creates potential regulatory arbitrage.', risk_level: 'medium', company: 'Multi-entity', exposure: 450_000_000, created_at: '2024-01-13T11:00:00Z', acknowledged: false },
+  { id: '4', title: 'Debt maturity wall — Q1 2025', description: '$8.2B of term debt matures within 90 days with limited refinancing disclosures in the filing.', risk_level: 'medium', company: 'Tech Holdings LLC', exposure: 8_200_000_000, created_at: '2024-01-12T08:00:00Z', acknowledged: true },
+  { id: '5', title: 'Related-party transaction anomaly', description: 'Undisclosed related-party loans totalling $120M identified in footnote disclosures.', risk_level: 'low', company: 'Horizon Capital', exposure: 120_000_000, created_at: '2024-01-11T17:45:00Z', acknowledged: true },
 ];
 
 function formatExposure(n?: number) {
@@ -26,9 +26,9 @@ function formatExposure(n?: number) {
 
 function riskIcon(level: RiskLevel) {
   switch (level) {
-    case 'high':   return <AlertTriangle className="h-4 w-4 text-red-400" />;
+    case 'high': return <AlertTriangle className="h-4 w-4 text-red-400" />;
     case 'medium': return <AlertCircle className="h-4 w-4 text-amber-400" />;
-    default:       return <CheckCircle2 className="h-4 w-4 text-green-400" />;
+    default: return <CheckCircle2 className="h-4 w-4 text-green-400" />;
   }
 }
 
@@ -43,23 +43,22 @@ export default function AlertsPage() {
     return matchRisk && matchSearch;
   });
 
-  const counts = {
-    high:   MOCK_ALERTS.filter(a => a.risk_level === 'high').length,
+  const counts: Record<string, number> = {
+    high: MOCK_ALERTS.filter(a => a.risk_level === 'high').length,
     medium: MOCK_ALERTS.filter(a => a.risk_level === 'medium').length,
-    low:    MOCK_ALERTS.filter(a => a.risk_level === 'low').length,
+    low: MOCK_ALERTS.filter(a => a.risk_level === 'low').length,
   };
 
   return (
     <div className="p-6 space-y-6">
       {/* Summary row */}
       <div className="grid grid-cols-3 gap-4">
-        {(['high','medium','low'] as RiskLevel[]).map(level => (
+        {(['high', 'medium', 'low'] as RiskLevel[]).map(level => (
           <button
             key={level}
             onClick={() => setFilter(f => f === level ? 'all' : level)}
-            className={`rounded-xl border p-4 text-left transition-all ${
-              filter === level ? riskBg(level) : 'border-[#1F1F23] bg-[#111113] hover:border-[#3B82F6]/20'
-            }`}
+            className={`rounded-xl border p-4 text-left transition-all ${filter === level ? riskBg(level) : 'border-[#1F1F23] bg-[#111113] hover:border-[#3B82F6]/20'
+              }`}
           >
             <div className="flex items-center gap-2 mb-1">{riskIcon(level)}<span className="text-[11px] uppercase tracking-widest text-[#52525B]">{level}</span></div>
             <p className="text-2xl font-bold text-[#FAFAFA]">{counts[level]}</p>
@@ -95,10 +94,9 @@ export default function AlertsPage() {
             className="relative pl-12"
           >
             {/* Timeline dot */}
-            <div className={`absolute left-3.5 top-5 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-[#09090B] ${
-              alert.risk_level === 'high' ? 'bg-red-500' :
+            <div className={`absolute left-3.5 top-5 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-[#09090B] ${alert.risk_level === 'high' ? 'bg-red-500' :
               alert.risk_level === 'medium' ? 'bg-amber-500' : 'bg-green-500'
-            }`} />
+              }`} />
             <Card className={`transition-all hover:border-[#3B82F6]/20 ${alert.acknowledged ? 'opacity-60' : ''}`}>
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-3">

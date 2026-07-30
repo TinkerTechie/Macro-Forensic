@@ -60,11 +60,10 @@ export default function ReportsPage() {
           <button
             key={r.id}
             onClick={() => setSelected(r)}
-            className={`w-full rounded-xl border p-3 text-left transition-all ${
-              selected.id === r.id
+            className={`w-full rounded-xl border p-3 text-left transition-all ${selected?.id === r.id
                 ? 'border-[#3B82F6]/30 bg-[#3B82F6]/5'
                 : 'border-[#1F1F23] bg-[#111113] hover:border-[#3B82F6]/20'
-            }`}
+              }`}
           >
             <div className="flex items-start gap-2.5">
               <FileText className="h-4 w-4 mt-0.5 text-[#52525B] shrink-0" />
@@ -82,54 +81,58 @@ export default function ReportsPage() {
 
       {/* Report viewer */}
       <div className="flex-1 overflow-y-auto">
-        <motion.div
-          key={selected.id}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="p-6 space-y-4"
-        >
-          {/* Header */}
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="risk" risk={selected.risk_level}>{riskLabel(selected.risk_level)}</Badge>
-                <Badge variant="default">FORENSIC REPORT</Badge>
+        {selected ? (
+          <motion.div
+            key={selected.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="p-6 space-y-4"
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="risk" risk={selected.risk_level}>{riskLabel(selected.risk_level)}</Badge>
+                  <Badge variant="default">FORENSIC REPORT</Badge>
+                </div>
+                <h2 className="text-xl font-bold text-[#FAFAFA]">{selected.title}</h2>
+                <div className="flex items-center gap-4 mt-1.5 text-[11px] text-[#52525B]">
+                  <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{selected.company}</span>
+                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDate(selected.created_at)}</span>
+                </div>
               </div>
-              <h2 className="text-xl font-bold text-[#FAFAFA]">{selected.title}</h2>
-              <div className="flex items-center gap-4 mt-1.5 text-[11px] text-[#52525B]">
-                <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{selected.company}</span>
-                <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDate(selected.created_at)}</span>
+              <div className="flex gap-2 shrink-0">
+                <Button variant="ghost" size="sm" onClick={() => copy(selected.sections.map(s => `## ${s.title}\n${s.content}`).join('\n\n'))}>
+                  {copied ? <CheckCircle className="h-3.5 w-3.5 text-green-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied ? 'Copied' : 'Copy'}
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Download className="h-3.5 w-3.5" /> PDF
+                </Button>
+                <Button variant="ghost" size="sm">
+                  <Printer className="h-3.5 w-3.5" /> Print
+                </Button>
               </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-              <Button variant="ghost" size="sm" onClick={() => copy(selected.sections.map(s => `## ${s.title}\n${s.content}`).join('\n\n'))}>
-                {copied ? <CheckCircle className="h-3.5 w-3.5 text-green-400" /> : <Copy className="h-3.5 w-3.5" />}
-                {copied ? 'Copied' : 'Copy'}
-              </Button>
-              <Button variant="outline" size="sm">
-                <Download className="h-3.5 w-3.5" /> PDF
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Printer className="h-3.5 w-3.5" /> Print
-              </Button>
-            </div>
-          </div>
 
-          {/* Summary card */}
-          <Card glow>
-            <CardContent className="p-5">
-              <p className="text-[11px] uppercase tracking-widest text-[#3F3F46] mb-2">Executive Summary</p>
-              <p className="text-sm leading-relaxed text-[#A1A1AA]">{selected.summary}</p>
-            </CardContent>
-          </Card>
+            {/* Summary card */}
+            <Card glow>
+              <CardContent className="p-5">
+                <p className="text-[11px] uppercase tracking-widest text-[#3F3F46] mb-2">Executive Summary</p>
+                <p className="text-sm leading-relaxed text-[#A1A1AA]">{selected.summary}</p>
+              </CardContent>
+            </Card>
 
-          {/* Sections */}
-          <Card>
-            {selected.sections.map(s => (
-              <ReportSection key={s.title} title={s.title} content={s.content} />
-            ))}
-          </Card>
-        </motion.div>
+            {/* Sections */}
+            <Card>
+              {selected.sections.map(s => (
+                <ReportSection key={s.title} title={s.title} content={s.content} />
+              ))}
+            </Card>
+          </motion.div>
+        ) : (
+          <div className="flex h-full items-center justify-center text-[#52525B] text-sm">Select a report to view details</div>
+        )}
       </div>
     </div>
   );

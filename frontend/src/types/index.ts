@@ -60,6 +60,7 @@ export interface AgentExecution {
   status: AgentStatus;
   latency_ms?: number;
   tokens?: number;
+  message?: string;
   started_at?: string;
   completed_at?: string;
 }

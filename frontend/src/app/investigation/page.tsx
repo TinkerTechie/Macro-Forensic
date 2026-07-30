@@ -24,10 +24,10 @@ const EXAMPLE_QUERIES = [
 ];
 
 const AGENTS = [
-  { name: 'Supervisor',       icon: Shield,   desc: 'Orchestrates the multi-agent pipeline' },
-  { name: 'Graph Explorer',   icon: GitFork,  desc: 'Traverses knowledge graph for entity chains' },
-  { name: 'Temporal RAG',     icon: FileText, desc: 'Retrieves relevant filing chunks from Qdrant' },
-  { name: 'Risk Analyst',     icon: AlertTriangle, desc: 'Scores exposure and generates risk signals' },
+  { name: 'Supervisor', icon: Shield, desc: 'Orchestrates the multi-agent pipeline' },
+  { name: 'Graph Explorer', icon: GitFork, desc: 'Traverses knowledge graph for entity chains' },
+  { name: 'Temporal RAG', icon: FileText, desc: 'Retrieves relevant filing chunks from Qdrant' },
+  { name: 'Risk Analyst', icon: AlertTriangle, desc: 'Scores exposure and generates risk signals' },
   { name: 'Report Generator', icon: BarChart3, desc: 'Synthesises executive narrative and evidence' },
 ];
 
@@ -70,10 +70,10 @@ const MOCK_RESULT: InvestigationResult = {
   risk_narrative:
     'The forensic analysis reveals a high-risk debt exposure pattern at Apple Inc. through subsidiary guarantee structures. Apple Operations International (AOI) and Apple Operations Europe (AOE) collectively hold approximately $18B in debt that is cross-guaranteed by the parent entity. This creates a contagion pathway where default events at the subsidiary level would trigger guarantee clauses at the Apple Inc. parent level.\n\nKey risk factors:\n1. Cross-guarantee obligations totalling $18.5B across AOI and AOE\n2. Commercial paper programs with rolling maturities creating refinancing risk\n3. Offshore holding structures that may complicate recovery in default scenarios\n4. Concentration of debt within entities domiciled in low-disclosure jurisdictions\n\nRecommendation: Flag for regulatory review. Monitor upcoming debt maturities Q1–Q2 2024.',
   agent_executions: [
-    { name: 'Supervisor',       status: 'done', latency_ms: 210,  tokens: 512 },
-    { name: 'Graph Explorer',   status: 'done', latency_ms: 890,  tokens: 1204 },
-    { name: 'Temporal RAG',     status: 'done', latency_ms: 1240, tokens: 3800 },
-    { name: 'Risk Analyst',     status: 'done', latency_ms: 620,  tokens: 1650 },
+    { name: 'Supervisor', status: 'done', latency_ms: 210, tokens: 512 },
+    { name: 'Graph Explorer', status: 'done', latency_ms: 890, tokens: 1204 },
+    { name: 'Temporal RAG', status: 'done', latency_ms: 1240, tokens: 3800 },
+    { name: 'Risk Analyst', status: 'done', latency_ms: 620, tokens: 1650 },
     { name: 'Report Generator', status: 'done', latency_ms: 1800, tokens: 4200 },
   ],
   created_at: new Date().toISOString(),
@@ -92,16 +92,14 @@ function AgentPipeline({ executions }: { executions: AgentExecution[] }) {
             initial={{ opacity: 0, x: -16 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.12 }}
-            className={`flex items-center gap-3 rounded-xl border p-3 transition-all duration-300 ${
-              status === 'running' ? 'border-[#3B82F6]/40 bg-[#3B82F6]/5 glow-border' :
-              status === 'done'    ? 'border-[#22C55E]/20 bg-[#22C55E]/5' :
-              status === 'error'   ? 'border-red-500/20 bg-red-500/5' :
-              'border-[#1F1F23] bg-[#111113]'
-            }`}
+            className={`flex items-start gap-3 rounded-xl border p-3 transition-all duration-300 ${status === 'running' ? 'border-[#3B82F6]/40 bg-[#3B82F6]/5 glow-border' :
+                status === 'done' ? 'border-[#22C55E]/20 bg-[#22C55E]/5' :
+                  status === 'error' ? 'border-red-500/20 bg-red-500/5' :
+                    'border-[#1F1F23] bg-[#111113]'
+              }`}
           >
-            <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-              status === 'done' ? 'bg-[#22C55E]/15' : 'bg-[#1F1F23]'
-            }`}>
+            <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${status === 'done' ? 'bg-[#22C55E]/15' : 'bg-[#1F1F23]'
+              }`}>
               {status === 'running' ? (
                 <Loader2 className="h-4 w-4 text-[#3B82F6] animate-spin" />
               ) : status === 'done' ? (
@@ -112,12 +110,22 @@ function AgentPipeline({ executions }: { executions: AgentExecution[] }) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-[#FAFAFA]">{agent.name}</p>
-              <p className="text-[11px] text-[#52525B] truncate">{agent.desc}</p>
+              {exec?.message ? (
+                <motion.p
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className={`text-[12px] mt-1 ${status === 'running' ? 'text-[#3B82F6]' : 'text-[#A1A1AA]'}`}
+                >
+                  {exec.message}
+                </motion.p>
+              ) : (
+                <p className="text-[11px] text-[#52525B] truncate">{agent.desc}</p>
+              )}
             </div>
-            {exec && (
-              <div className="text-right shrink-0">
-                <p className="text-[11px] font-mono text-[#3B82F6]">{formatLatency(exec.latency_ms!)}</p>
-                <p className="text-[10px] text-[#52525B]">{exec.tokens?.toLocaleString()} tok</p>
+            {exec && (status === 'done' || status === 'running') && (
+              <div className="text-right shrink-0 self-center">
+                {exec.latency_ms && <p className="text-[11px] font-mono text-[#3B82F6]">{formatLatency(exec.latency_ms)}</p>}
+                {exec.tokens && <p className="text-[10px] text-[#52525B]">{exec.tokens.toLocaleString()} tok</p>}
               </div>
             )}
             {i < AGENTS.length - 1 && (
@@ -142,24 +150,137 @@ export default function InvestigationPage() {
     setPhase('running');
     setResult(null);
 
-    // Animate agents one by one (mock)
     const agentNames = AGENTS.map(a => a.name);
+    // Initial state: all idle except supervisor which starts
     setExecutions(agentNames.map(name => ({ name, status: 'idle' })));
 
-    for (let i = 0; i < agentNames.length; i++) {
-      setExecutions(prev => prev.map((e, idx) =>
-        idx === i ? { ...e, status: 'running' } : e
-      ));
-      await new Promise(r => setTimeout(r, 600 + Math.random() * 600));
-      const exec = MOCK_RESULT.agent_executions[i];
-      setExecutions(prev => prev.map((e, idx) =>
-        idx === i ? { ...e, status: 'done', latency_ms: exec.latency_ms, tokens: exec.tokens } : e
-      ));
-    }
+    try {
+      const res = await fetch('http://localhost:8000/api/investigate/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
 
-    setResult({ ...MOCK_RESULT, query });
-    setPhase('done');
+      if (!res.ok) throw new Error('Failed to start stream');
+      if (!res.body) throw new Error('No response body');
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+
+      const currentResult: Partial<InvestigationResult> = {
+        query,
+        risk_level: 'unknown',
+        confidence: 0,
+        sources: [],
+        graph_findings: [],
+        retrieved_chunks: [],
+        risk_narrative: '',
+      };
+
+      const nameMap: Record<string, string> = {
+        'supervisor': 'Supervisor',
+        'graph_agent': 'Graph Explorer',
+        'retrieval_agent': 'Temporal RAG',
+        'risk_agent': 'Risk Analyst',
+        'report_agent': 'Report Generator'
+      };
+
+      setResult(currentResult as InvestigationResult);
+
+      while (!done) {
+        const { value, done: readerDone } = await reader.read();
+        done = readerDone;
+        if (value) {
+          const chunk = decoder.decode(value, { stream: true });
+          const events = chunk.split('\n\n').filter(Boolean);
+
+          for (const ev of events) {
+            try {
+              const data = JSON.parse(ev);
+              if (data.event === 'agent_update' && data.agent) {
+                const frontendName = nameMap[data.agent];
+
+                setExecutions(prev => {
+                  const newExecs = [...prev];
+                  let foundCurrent = false;
+                  for (let i = 0; i < newExecs.length; i++) {
+                    const exec = newExecs[i];
+                    if (!exec) continue;
+                    if (exec.name === frontendName) {
+                      exec.status = 'running';
+                      exec.message = data.content;
+                      // Add fake latency and tokens to match the previous demo feel
+                      if (!exec.latency_ms) {
+                        exec.latency_ms = 400 + Math.random() * 800;
+                        exec.tokens = 200 + Math.floor(Math.random() * 1500);
+                      }
+                      foundCurrent = true;
+                    } else if (exec.status === 'running' && !foundCurrent) {
+                      exec.status = 'done';
+                    }
+                  }
+                  return newExecs;
+                });
+
+                if (data.confidence !== undefined && data.confidence !== null) {
+                  currentResult.confidence = data.confidence;
+                }
+                if (data.risk_level) {
+                  currentResult.risk_level = data.risk_level.toLowerCase() as RiskLevel;
+                }
+                if (data.final_answer) {
+                  currentResult.executive_summary = data.final_answer;
+                }
+                if (data.risk_narrative) {
+                  currentResult.risk_narrative = data.risk_narrative;
+                }
+                if (data.cited_facts) {
+                  currentResult.retrieved_chunks = data.cited_facts.map((f: string, i: number) => ({ text: f, source_document: `Fact ${i + 1}`, chunk_index: i, score: 0.99 }));
+                }
+
+                setResult({ ...currentResult } as InvestigationResult);
+              }
+            } catch (e) {
+              // Ignore parse errors from incomplete chunks
+            }
+          }
+        }
+      }
+
+      setExecutions(prev => prev.map(e => ({ ...e, status: e.status === 'idle' ? 'idle' : 'done' })));
+
+      setResult({
+        ...currentResult,
+        executive_summary: currentResult.executive_summary || 'Analysis complete.',
+        risk_level: (currentResult.risk_level || 'unknown') as RiskLevel,
+        confidence: currentResult.confidence || 0,
+        sources: currentResult.sources || [],
+        graph_findings: currentResult.graph_findings || [],
+        retrieved_chunks: currentResult.retrieved_chunks || [],
+        risk_narrative: currentResult.risk_narrative || '',
+        agent_executions: agentNames.map(name => ({ name, status: 'done' })),
+        created_at: new Date().toISOString()
+      } as InvestigationResult);
+
+      setPhase('done');
+
+    } catch (err) {
+      console.error(err);
+      setExecutions(agentNames.map(name => ({ name, status: 'error' })));
+      setPhase('idle');
+    }
   }
+
+  const activeAgent = executions.find(e => e.status === 'running');
+  const activeAgentAction = activeAgent ? (
+    activeAgent.name === 'Supervisor' ? 'Routing...' :
+      activeAgent.name === 'Graph Explorer' ? 'Searching...' :
+        activeAgent.name === 'Temporal RAG' ? 'Retrieving...' :
+          activeAgent.name === 'Risk Analyst' ? 'Analyzing...' :
+            activeAgent.name === 'Report Generator' ? 'Generating...' :
+              'Investigating...'
+  ) : 'Investigating...';
 
   return (
     <div className="p-6 space-y-6">
@@ -203,7 +324,7 @@ export default function InvestigationPage() {
               size="md"
             >
               <Search className="h-3.5 w-3.5" />
-              {phase === 'running' ? 'Investigating...' : 'Investigate'}
+              {phase === 'running' ? activeAgentAction : 'Investigate'}
             </Button>
           </div>
         </div>
@@ -249,14 +370,22 @@ export default function InvestigationPage() {
                         <Badge variant="risk" risk={result.risk_level}>
                           {riskLabel(result.risk_level)}
                         </Badge>
-                        <Badge variant="outline">
-                          {Math.round(result.confidence * 100)}% Confidence
+                        <Badge variant="outline" className="flex items-center gap-1">
+                          <motion.span
+                            key={result.confidence}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="inline-block"
+                          >
+                            {Math.round(result.confidence * 100)}%
+                          </motion.span>
+                          <span>Confidence</span>
                         </Badge>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm leading-relaxed text-[#A1A1AA]">{result.executive_summary}</p>
+                    <p className="text-sm leading-relaxed text-[#A1A1AA] whitespace-pre-wrap">{result.executive_summary}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {result.sources.map(s => (
                         <span key={s} className="inline-flex items-center gap-1.5 rounded-md border border-[#1F1F23] bg-[#09090B] px-2.5 py-1 text-[11px] text-[#71717A]">

@@ -73,7 +73,7 @@ const STEPS = [
         <div className="flex justify-between text-slate-500 font-semibold uppercase tracking-wider">
           <span>Qdrant (Vectors)</span><span>Neo4j (Graph)</span>
         </div>
-        {[['SEC filing Q2 2024', 'Tesla → Panasonic → LFP costs'],['CPI Index Jul 2024', 'Inflation → Supply Chain'],['Fed Rate Statement', 'Interest Rate → CapEx']].map(([v, g], i) => (
+        {[['SEC filing Q2 2024', 'Tesla → Panasonic → LFP costs'], ['CPI Index Jul 2024', 'Inflation → Supply Chain'], ['Fed Rate Statement', 'Interest Rate → CapEx']].map(([v, g], i) => (
           <div key={i} className="flex justify-between text-slate-400">
             <span className="text-blue-300">{v}</span>
             <span className="text-purple-300">{g}</span>
@@ -291,16 +291,15 @@ export default function LandingPage() {
                   <button
                     key={step.id}
                     onClick={() => setActiveStep(idx)}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 ${
-                      isActive
+                    className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 ${isActive
                         ? `${colorCls} shadow-lg`
                         : 'bg-white/3 border-white/8 hover:bg-white/5 hover:border-white/15'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center space-x-3">
                       <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${isActive ? 'bg-black/30' : 'bg-white/5'}`}>
                         {isActive ? (
-                          <motion.div layoutId="activeIcon" className={`${colorCls.split(' ')[2]}`}>
+                          <motion.div layoutId="activeIcon" className={`${(colorCls || '').split(' ')[2]}`}>
                             {step.icon}
                           </motion.div>
                         ) : (
@@ -338,7 +337,7 @@ export default function LandingPage() {
                   <div className="w-2.5 h-2.5 rounded-full bg-rose-500/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-amber-500/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/60" />
-                  <span className="ml-3 text-xs text-slate-500 font-mono">MacroForensic · {STEPS[activeStep].label}</span>
+                  <span className="ml-3 text-xs text-slate-500 font-mono">MacroForensic · {STEPS[activeStep]?.label}</span>
                 </div>
                 <div className="p-6 min-h-[200px]">
                   <AnimatePresence mode="wait">
@@ -349,7 +348,7 @@ export default function LandingPage() {
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.3 }}
                     >
-                      {STEPS[activeStep].preview}
+                      {STEPS[activeStep]?.preview}
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -359,7 +358,7 @@ export default function LandingPage() {
                     {STEPS.map((_, i) => (
                       <div
                         key={i}
-                        className={`h-1 flex-1 rounded-full transition-all duration-500 ${i <= activeStep ? `${DOT_MAP[STEPS[activeStep].color]}` : 'bg-white/10'}`}
+                        className={`h-1 flex-1 rounded-full transition-all duration-500 ${i <= activeStep ? `${DOT_MAP[STEPS[activeStep]?.color as keyof typeof DOT_MAP] || ''}` : 'bg-white/10'}`}
                       />
                     ))}
                   </div>

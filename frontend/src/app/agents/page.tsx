@@ -68,7 +68,7 @@ const AGENTS = [
   },
 ];
 
-const stagger = {
+const stagger: any = {
   container: { hidden: {}, show: { transition: { staggerChildren: 0.08 } } },
   item: { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } } },
 };
@@ -126,7 +126,7 @@ export default function AgentsPage() {
                       <div>
                         <h3 className="text-sm font-bold text-[#FAFAFA]">{agent.name}</h3>
                         <Badge variant="default" className="mt-0.5 text-[9px]">
-                          {agent.status === 'idle' ? 'READY' : agent.status.toUpperCase()}
+                          {agent.status === 'idle' ? 'READY' : (agent.status as string).toUpperCase()}
                         </Badge>
                       </div>
                     </div>

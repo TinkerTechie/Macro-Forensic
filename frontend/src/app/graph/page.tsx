@@ -70,10 +70,47 @@ interface PanelData {
 }
 
 export default function GraphPage() {
-  const [nodes, , onNodesChange] = useNodesState(INITIAL_NODES);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [selected, setSelected] = useState<PanelData | null>(null);
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/graph/nodes')
+      .then(r => r.json())
+      .then(data => {
+        const dataNodes = data.nodes || [];
+        const dataEdges = data.edges || [];
+        
+        // Layout nodes in a basic circle/grid to avoid stacking on (0,0)
+        const total = dataNodes.length;
+        const radius = Math.max(200, total * 15);
+        const center = { x: 500, y: 300 };
+        
+        const laidOutNodes = dataNodes.map((n: any, i: number) => {
+          const angle = total > 0 ? (i / total) * 2 * Math.PI : 0;
+          return {
+            ...n,
+            position: {
+              x: center.x + radius * Math.cos(angle),
+              y: center.y + radius * Math.sin(angle)
+            },
+            type: 'default'
+          };
+        });
+        
+        const styledEdges = dataEdges.map((e: any) => ({
+          ...e,
+          markerEnd: { type: MarkerType.ArrowClosed },
+          style: { stroke: '#6366F1' },
+          labelStyle: { fill: '#A1A1AA', fontSize: 9 }
+        }));
+        
+        setNodes(laidOutNodes);
+        setEdges(styledEdges);
+      })
+      .catch(console.error);
+  }, [setNodes, setEdges]);
 
   const onConnect = useCallback((c: Connection) => setEdges(eds => addEdge(c, eds)), [setEdges]);
 
